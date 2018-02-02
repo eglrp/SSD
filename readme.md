@@ -1,0 +1,1 @@
+### reference* [ssd](https://github.com/seann999/ssd_tensorflow)* [ssd理解](https://zhuanlan.zhihu.com/p/24954433?refer=xiaoleimlnote)
