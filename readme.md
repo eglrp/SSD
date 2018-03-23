@@ -1,13 +1,11 @@
 ## SSD
 
 
-### Paper
-
-* [arxiv article](http://arxiv.org/abs/1512.02325)
-
-* [SSD: Single Shot MultiBox Detector](/paper/SSD%20-%20Single%20Shot%20MultiBox%20Detector.pdf)
+### Paper 阅读
+[目标检测系列-SSD论文阅读笔记](https://github.com/jiye-ML/Object-Recognition-Review/tree/master/SSD%20Single%20shot%20multibox%20detector)
 
 ![SSD](paper/SSD.png)
+
 
 ### Checkpoint
 
