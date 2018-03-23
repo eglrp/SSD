@@ -50,7 +50,7 @@ class ConvertCaffeToTensorflow(object):
 
 if __name__ == '__main__':
     ConvertCaffeToTensorflow(net_model=ssd_vgg_300,
-                             caffemodel_path="caffemodels/VGG_VOC0712_SSD_300x300/"
+                             caffemodel_path="../caffemodels/VGG_VOC0712_SSD_300x300/"
                                              "VGG_VOC0712_SSD_300x300_iter_120000.caffemodel",
                              ckpt_path="../checkpoints/VGG_VOC0712_SSD_300x300.ckpt").convert()
 

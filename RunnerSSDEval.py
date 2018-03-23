@@ -231,5 +231,5 @@ class RunnerEval(object):
     pass
 
 if __name__ == '__main__':
-    runner = RunnerEval(ckpt_path="models/ssd_vgg_300_fine/ssd_300_vgg.ckpt-3000", batch_size=16)
+    runner = RunnerEval(ckpt_path="./checkpoints/VGG_VOC0712_SSD_300x300.ckpt", batch_size=16)
     runner.eval_demo()

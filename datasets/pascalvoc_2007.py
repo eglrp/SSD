@@ -17,7 +17,7 @@
 from datasets import pascalvoc_common
 
 
-FILE_PATTERN = 'voc_2012_%s_*.tfrecord'
+FILE_PATTERN = 'voc_2007_%s_*.tfrecord'
 ITEMS_TO_DESCRIPTIONS = {
     'image': 'A color image of varying height and width.',
     'shape': 'Shape of the image',

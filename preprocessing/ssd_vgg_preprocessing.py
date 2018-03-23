@@ -43,7 +43,7 @@ CROP_RATIO_RANGE = (0.6, 1.67)  # Distortion ratio during cropping.
 
 
 # 白化（whitened）：零均值的随机向量，且元素之间是无关联的。
-# 减均值
+# 减均值 http://lib.csdn.net/article/machinelearning/42825
 def tf_image_whitened(image, means=list([_R_MEAN, _G_MEAN, _B_MEAN])):
     """
     Subtracts the given means from each image channel.
@@ -307,7 +307,7 @@ def preprocess_for_eval(image, labels, bboxes, out_shape, data_format='NHWC',
             raise ValueError('Input must be of size [height, width, C>0]')
 
         image = tf.to_float(image)
-        image = tf_image_whitened(image, [_R_MEAN, _G_MEAN, _B_MEAN])
+        image = tf_image_whitened(image, [_R_MEAN, _G_MEAN, _B_MEAN])  # 减去了均值
 
         # Add image rectangle to bboxes.
         bbox_img = tf.constant([[0., 0., 1., 1.]])

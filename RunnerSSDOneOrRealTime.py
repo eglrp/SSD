@@ -41,7 +41,7 @@ class RunnerOneOrRealTime(object):
             img_input, None, None, net_shape, data_format, resize=ssd_vgg_preprocessing.Resize.WARP_RESIZE)
         # 升维
         image_4d = tf.expand_dims(image_pre, 0)
-
+        # 网络装配，定义网络结构，网络的能力，和输入
         with slim.arg_scope(ssd_net.arg_scope(data_format=data_format)):
             predictions, localisations, _, _ = ssd_net.net(image_4d, is_training=False, reuse=False)
 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     #          # image_name="street"
     #          )
 
-    demo_300("checkpoints/ssd_300_vgg.ckpt", select_threshold=0.5, nms_threshold=0.45,
+    demo_300("./checkpoints/VGG_VOC0712_SSD_300x300.ckpt", select_threshold=0.5, nms_threshold=0.45,
              # image_name="car"
              image_name="dog"
              # image_name="eagle"

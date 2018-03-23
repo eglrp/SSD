@@ -8,10 +8,10 @@ import tf_extend as tfe
 def tf_ssd_bboxes_encode_layer(labels, bboxes, anchors_layer, num_classes, no_annotation_label,
                                ignore_threshold=0.5, prior_scaling=list([0.1, 0.1, 0.2, 0.2]), dtype=tf.float32):
     """Encode groundtruth labels and bounding boxes using SSD anchors from
-    one layer.
+    one layer. 整个过程是对groundtruth进行编码的过程
 
     Arguments:
-      labels: 1D Tensor(int64) containing groundtruth labels;
+      labels: 1D Tensor(int64) containing groundtruth labels;Encode groundtruth
       bboxes: Nx4 Tensor(float) with bboxes relative coordinates;
       anchors_layer: Numpy array with layer anchors;
       matching_threshold: Threshold for positive match with groundtruth bboxes;
@@ -29,7 +29,7 @@ def tf_ssd_bboxes_encode_layer(labels, bboxes, anchors_layer, num_classes, no_an
     vol_anchors = (xmax - xmin) * (ymax - ymin)  # 默认框的面积
 
     # Initialize tensors...
-    shape = (yref.shape[0], yref.shape[1], href.size)
+    shape = (yref.shape[0], yref.shape[1], href.size)   # 特征图的大小
     feat_labels = tf.zeros(shape, dtype=tf.int64)  # 适合的标签
     feat_scores = tf.zeros(shape, dtype=dtype)  # 适合的得分
     feat_ymin = tf.zeros(shape, dtype=dtype)  # 适合的坐标
@@ -81,7 +81,7 @@ def tf_ssd_bboxes_encode_layer(labels, bboxes, anchors_layer, num_classes, no_an
         # Jaccard score.
         label = labels[i]
         bbox = bboxes[i]
-        jaccard = jaccard_with_anchors(bbox)
+        jaccard = jaccard_with_anchors(bbox)  # 计算某一groundtruth框和这一层所有默认box之间的交/并
 
         # Mask: check threshold + scores + no annotations + num_classes.
         # 条件：jaccard（交/并）>feat_scores（当前得分），且feat_scores>-0.5，且label<类别数
@@ -90,10 +90,10 @@ def tf_ssd_bboxes_encode_layer(labels, bboxes, anchors_layer, num_classes, no_an
         mask = tf.logical_and(mask, label < num_classes)
 
         # Update values using mask.
-        # 对于满足上述条件的默认框的得分设为jaccard（交/并），否则，得分设为之前的feat_scores（初始为0）。
+        # 对于满足上述条件的默认框的得分设为jaccard（交/并），否则，得分设为之前的feat_scores（初始为0）。 迭代更新的过程，每一次更新score都会更大
         feat_scores = tf.where(mask, jaccard, feat_scores)
 
-        # 对于满足上述条件的默认框的标签设为label，否则，标签设为之前的feat_labels（初始为0）。
+        # 对于满足上述条件的默认框的标签设为label，否则，标签设为之前的feat_labels（初始为0）。 随着score条件提高，label可信读也提高了
         imask = tf.cast(mask, tf.int64)
         feat_labels = imask * label + (1 - imask) * feat_labels
 
@@ -162,14 +162,14 @@ def tf_ssd_bboxes_encode(labels, bboxes, anchors, num_classes, no_annotation_lab
     pass
 
 
-# 结合tf_ssd_bboxes_decode_layer，要么是预测的框，要么是整张图片
+# 结合tf_ssd_bboxes_encode_layer，要么是预测的框，要么是整张图片
 def tf_ssd_bboxes_decode_layer(feat_localizations, anchors_layer, prior_scaling=list([0.1, 0.1, 0.2, 0.2])):
     """Compute the relative bounding boxes from the layer features and
     reference anchor bounding boxes.
 
     Arguments:
       feat_localizations: Tensor containing localization features.
-      anchors: List of numpy array containing anchor boxes.
+      anchors: List of numpy  array containing anchor boxes.
 
     Return:
       Tensor Nx4: ymin, xmin, ymax, xmax

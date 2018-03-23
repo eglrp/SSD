@@ -155,7 +155,7 @@ class RunnerTrain(object):
             dataset, common_queue_capacity=20 * batch_size, common_queue_min=10 * batch_size, shuffle=True)
         # 提取数据
         [image, labels, bboxes] = provider.get(['image', 'object/label', 'object/bbox'])
-
+        # 数据预处理
         image, labels, bboxes = ssd_vgg_preprocessing.preprocess_for_train(image, labels, bboxes,
                                                                            self.img_shape, data_format)
 
@@ -267,7 +267,7 @@ class RunnerTrain(object):
             pass
         pass
 
-    # 从ImageNet模型恢复:exclude_scopes指定要恢复的变量
+    # 从ImageNet模型恢复:exclude_scopes指定要排除的变量
     def restore_image_net_if_y(self, image_net_ckpt_model_file, exclude_scopes, image_net_ckpt_model_scope="vgg_16"):
         variables_to_restore = []
         for var in tf.model_variables():  # 遍历所有的模型变量
@@ -311,7 +311,7 @@ class RunnerTrain(object):
 def run_type_1_or_2():
     # 1和2的区别只是在ckpt_path下有没有训练好的模型
     runner = RunnerTrain(run_type=1, ckpt_path="./models/ssd_vgg_300_1", ckpt_name="ssd_300_vgg.ckpt",
-                         batch_size=8, learning_rate=0.01, end_learning_rate=0.00001)
+                         batch_size=16, learning_rate=0.01, end_learning_rate=0.00001)
     runner.train_demo(num_batches=100000, print_1_freq=10, save_model_freq=100)
     pass
 
@@ -320,7 +320,7 @@ def run_type_1_or_2():
 def run_type_3():
     runner = RunnerTrain(run_type=3, ckpt_path="./models/ssd_vgg_300_3", ckpt_name="ssd_300_vgg.ckpt",
                          image_net_ckpt_model_file="./models/vgg/vgg_16.ckpt",
-                         batch_size=8, learning_rate=0.01, end_learning_rate=0.00001)
+                         batch_size=16, learning_rate=0.01, end_learning_rate=0.00001)
     runner.train_demo(num_batches=100000, print_1_freq=10, save_model_freq=1000)
     pass
 
@@ -335,4 +335,4 @@ def run_type_4():
 
 
 if __name__ == '__main__':
-    run_type_3()
+    run_type_1_or_2()

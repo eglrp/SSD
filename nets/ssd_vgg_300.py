@@ -250,7 +250,7 @@ def ssd_anchor_one_layer(img_shape, feat_shape, sizes, ratios, step, offset=0.5,
 
     Arguments:
       feat_shape: Feature shape, used for computing relative position grids;
-      size: Absolute reference sizes;
+      size: Absolute reference sizes; 这里的size是一个tuple（该层的尺寸，下一层的尺寸），因为根据论文所说，ratio为1的会产生两个框，s'_k, scale is s'_k=sqrt(s_k*s_k+1)，这是额外的额外的一个附加框
       ratios: Ratios to use on these features;
       img_shape: Image shape, used for computing height, width relatively to the
         former;
@@ -265,7 +265,7 @@ def ssd_anchor_one_layer(img_shape, feat_shape, sizes, ratios, step, offset=0.5,
     # y = (y.astype(dtype) + offset) / feat_shape[0]
     # x = (x.astype(dtype) + offset) / feat_shape[1]
     # Weird SSD-Caffe computation using steps values...
-
+    # 对应的特征图上每个点的框的横纵坐标
     y, x = np.mgrid[0:feat_shape[0], 0:feat_shape[1]]
     y = (y.astype(dtype) + offset) * step / img_shape[0]
     x = (x.astype(dtype) + offset) * step / img_shape[1]
@@ -278,7 +278,7 @@ def ssd_anchor_one_layer(img_shape, feat_shape, sizes, ratios, step, offset=0.5,
     # Compute relative height and width.
     # Tries to follow the original implementation of SSD for the order.
     num_anchors = len(sizes) + len(ratios)
-    h = np.zeros((num_anchors, ), dtype=dtype)
+    h = np.zeros((num_anchors, ), dtype=dtype)  # 对应的特征图上每个点的长宽
     w = np.zeros((num_anchors, ), dtype=dtype)
     # Add first anchor boxes with ratio=1.
     # 论文种的s_k等于=sizes[0] / img_shape[0]
@@ -334,14 +334,15 @@ def ssd_multibox_layer(inputs, num_classes, sizes, ratios=list([1]), normalizati
     net = inputs
     if normalization > 0:
         net = custom_layers.l2_normalization(net, scaling=True)
-    # Number of anchors，每个特征图位置数目*每个点框数目
+    # Number of anchors., 两种尺寸，每种都有缩放
     num_anchors = len(sizes) + len(ratios)
 
     # Location.：比如第一层：38 * 38 * 4 * 4，每一个点（28 * 38）的num_anchors（4）种框的四个坐标值（4，x_min, x_max, y_min, y_max）
     num_loc_pred = num_anchors * 4
     loc_pred = slim.conv2d(net, num_loc_pred, [3, 3], activation_fn=None, scope='conv_loc')
     loc_pred = custom_layers.channel_to_last(loc_pred)
-    loc_pred = tf.reshape(loc_pred, tensor_shape(loc_pred, 4)[:-1]+[num_anchors, 4])
+    # 特征图的每个点都有每个尺寸的各个缩放比的框
+    loc_pred = tf.reshape(loc_pred, tensor_shape(loc_pred, 4)[:-1]+[num_anchors, 4])   # （38,38,num_anchors,4）
 
     # Class prediction.: 比如第一层：38 * 38 * 4 * 21，每一个点（28 * 38）的num_anchors（4）种框的每一类预测得分（21）
     num_cls_pred = num_anchors * num_classes
@@ -349,6 +350,7 @@ def ssd_multibox_layer(inputs, num_classes, sizes, ratios=list([1]), normalizati
     cls_pred = custom_layers.channel_to_last(cls_pred)
     cls_pred = tf.reshape(cls_pred, tensor_shape(cls_pred, 4)[:-1]+[num_anchors, num_classes])
     return cls_pred, loc_pred
+
 
 
 def ssd_net(inputs, num_classes=SSDNet.default_params.num_classes, feat_layers=SSDNet.default_params.feat_layers,
@@ -511,7 +513,7 @@ def ssd_losses(logits, localisations, gclasses, glocalisations, gscores, match_t
         glocalisations = tf.concat(fglocalisations, axis=0)
         dtype = logits.dtype
 
-        # Compute positive matching mask...
+        # Compute positive matching mask... 正样本
         pmask = gscores > match_threshold
         fpmask = tf.cast(pmask, dtype)
         n_positives = tf.reduce_sum(fpmask)
@@ -544,6 +546,7 @@ def ssd_losses(logits, localisations, gclasses, glocalisations, gscores, match_t
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=no_classes)
             loss = tf.div(tf.reduce_sum(loss * fnmask), batch_size, name='value')
             tf.losses.add_loss(loss)
+
 
         # Add localization loss: smooth L1, L2, ...
         with tf.name_scope('localization'):

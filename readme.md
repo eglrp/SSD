@@ -349,4 +349,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999, epsilo
 ### Reference
 
 * [balancap/SSD-Tensorflow](https://github.com/balancap/SSD-Tensorflow)
-
+* [代码解读](https://zhuanlan.zhihu.com/p/25100992)
+* [论文阅读：SSD: Single Shot MultiBox Detector](http://blog.csdn.net/u010167269/article/details/52563573)
+* [ssd超参数的一些解释](http://blog.csdn.net/shaopeng568/article/details/78955580)
+* [bounding box regressing](https://blog.csdn.net/zijin0802034/article/details/77685438)

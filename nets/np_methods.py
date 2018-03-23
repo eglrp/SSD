@@ -27,7 +27,7 @@ def ssd_bboxes_decode(feat_localizations, anchor_bboxes, prior_scaling=list([0.1
     Return:
       numpy array Nx4: ymin, xmin, ymax, xmax
     """
-    # Reshape for easier broadcasting.
+    # Reshape for easier broadcasting. TODO: 这里的坐标是怎么联系的
     l_shape = feat_localizations.shape
     feat_localizations = np.reshape(feat_localizations, (-1, l_shape[-2], l_shape[-1]))
     yref, xref, href, wref = anchor_bboxes
@@ -80,7 +80,7 @@ def ssd_bboxes_select_layer(predictions_layer, localizations_layer, anchors_laye
     else:
         sub_predictions = predictions_layer[:, :, 1:]
         # the indices where `condition` is True
-        idxes = np.where(sub_predictions > select_threshold)
+        idxes = np.where(sub_predictions > select_threshold)    # 根据预测目标分类是否正确来抽出框
         classes = idxes[-1]+1
         scores = sub_predictions[idxes]
         bboxes = localizations_layer[idxes[:-1]]
@@ -216,13 +216,13 @@ def bboxes_intersection(bboxes_ref, bboxes2):
 # [NMS——非极大值抑制](http://blog.csdn.net/shuzfan/article/details/52711706)
 def bboxes_nms(classes, scores, bboxes, nms_threshold=0.45):
     """
-    Apply non-maximum selection to bounding boxes.
+    Apply non-maximum selection to bounding boxes. 这里的score是已经排过序的
     """
     keep_bboxes = np.ones(scores.shape, dtype=np.bool)
     for i in range(scores.size-1):
         if keep_bboxes[i]:
             # Computer overlap with bboxes which are following.
-            # 计算重叠率：交/并
+            # 计算重叠率：交/并  计算该框和后面所有框的
             overlap = bboxes_jaccard(bboxes[i], bboxes[(i+1):])
             # Overlap threshold for keeping + checking part of the same class
             # 重叠率小于nms_threshold或者不同类，即：若是同类且重叠率大于nms_threshold，则选择概率大的，剔除概率小的。
