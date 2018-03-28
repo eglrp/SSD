@@ -1,6 +1,12 @@
 ## SSD
 
 
+### 写在前面
+
+* 编码和解码过程是个难点，代码中的连接务必要看
+* ground truth 的处理也是个难点
+
+
 ### Paper 阅读
 [目标检测系列-SSD论文阅读笔记](https://github.com/jiye-ML/Object-Recognition-Review/tree/master/SSD%20Single%20shot%20multibox%20detector)
 
@@ -351,3 +357,4 @@ optimizer = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999, epsilo
 * [论文阅读：SSD: Single Shot MultiBox Detector](http://blog.csdn.net/u010167269/article/details/52563573)
 * [ssd超参数的一些解释](http://blog.csdn.net/shaopeng568/article/details/78955580)
 * [bounding box regressing](https://blog.csdn.net/zijin0802034/article/details/77685438)
+* [PaddlePaddle实现SSD介绍](http://mp.weixin.qq.com/s?__biz=MzIxNTgyMDMwMw==&mid=2247484108&idx=1&sn=39b1dca0255c38ecdd9c4cc0eefe089b&chksm=979333aca0e4baba67b456acffcdccf26f09e160ab996205f396013dea163c17c3b0123b476c&mpshare=1&scene=1&srcid=0322siaJQopIGL6SLUNOlrR8#rd)

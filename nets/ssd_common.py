@@ -5,6 +5,8 @@ import tf_extend as tfe
 # =========================================================================== #
 # TensorFlow implementation of boxes SSD encoding / decoding.
 # =========================================================================== #
+# 看懂了下面这篇文章，更好理解编码过程和解码过程
+# http://mp.weixin.qq.com/s?__biz=MzUyMjE2MTE0Mw==&mid=2247485558&idx=2&sn=d9b61680e523da49445f202f1fbb6954&chksm=f9d156eecea6dff8894f7ca6a1dd7a915c24c946cdc396ca5151e3cee0013ca8bf0552311482&mpshare=1&scene=1&srcid=0209syioGHqE9f3G8gwNyl9P#rd
 def tf_ssd_bboxes_encode_layer(labels, bboxes, anchors_layer, num_classes, no_annotation_label,
                                ignore_threshold=0.5, prior_scaling=list([0.1, 0.1, 0.2, 0.2]), dtype=tf.float32):
     """Encode groundtruth labels and bounding boxes using SSD anchors from
@@ -176,7 +178,7 @@ def tf_ssd_bboxes_decode_layer(feat_localizations, anchors_layer, prior_scaling=
     """
     yref, xref, href, wref = anchors_layer
 
-    # Compute center, height and width
+    # Compute center, height and width TODO：这部分 prior_scaling 没看懂
     cx = feat_localizations[:, :, :, :, 0] * wref * prior_scaling[0] + xref
     cy = feat_localizations[:, :, :, :, 1] * href * prior_scaling[1] + yref
     w = wref * tf.exp(feat_localizations[:, :, :, :, 2] * prior_scaling[2])

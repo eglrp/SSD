@@ -41,7 +41,7 @@ def abs_smooth(x):
     r = 0.5 * ((absx - 1) * minx + absx)
     return r
 
-
+# 其仅仅是对每个像素点在channle维度做归一化
 @add_arg_scope
 def l2_normalization(inputs, scaling=False, scale_initializer=init_ops.ones_initializer(), reuse=None,
                      variables_collections=None, outputs_collections=None,
