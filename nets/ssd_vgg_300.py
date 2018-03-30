@@ -543,7 +543,9 @@ def ssd_losses(logits, localisations, gclasses, glocalisations, gscores, match_t
             tf.losses.add_loss(loss)
 
         with tf.name_scope('cross_entropy_neg'):
+            # 从不是正样本的框里面选择， 让他们预测是背景的概率
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=no_classes)
+            # 预测背景的置信度越小，误差越大，  误差变小说的是，是背景要预测成背景
             loss = tf.div(tf.reduce_sum(loss * fnmask), batch_size, name='value')
             tf.losses.add_loss(loss)
 
